@@ -4,7 +4,7 @@
     using Entitas;
     using Sirenix.OdinInspector;
 
-    public class OnComponentRemoved : ComponentEventBase
+    public class OnComponentRemoved : ComponentBase
     {
         [DrawWithUnity]
         public AdvancedEvent OnRemoved;

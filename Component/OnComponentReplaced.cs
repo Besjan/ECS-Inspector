@@ -5,7 +5,7 @@
     using Sirenix.OdinInspector;
     using UnityEngine;
 
-    public class OnComponentReplaced : ComponentEventBase
+    public class OnComponentReplaced : ComponentBase
     {
         #region Events
         [DrawWithUnity]

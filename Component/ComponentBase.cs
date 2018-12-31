@@ -5,7 +5,7 @@
     using System;
 
     [HideMonoScript]
-    public abstract class ComponentEventBase : SerializedMonoBehaviour
+    public abstract class ComponentBase : SerializedMonoBehaviour
     {
         #region Properties
         [ValidateInput("IsValidEntity", "Entity reference is missing!")]
