@@ -1,4 +1,4 @@
-﻿namespace BeeX.ECS
+﻿namespace Cuku.ECS
 {
     using ByteSheep.Events;
     using Entitas;
