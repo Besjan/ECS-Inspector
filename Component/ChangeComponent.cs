@@ -4,7 +4,7 @@
     using System;
     using UnityEngine;
 
-    public class ReplaceComponent : ComponentBase
+    public class ChangeComponent : ComponentBase
     {
         Type[] componentTypes = new Type[0];
 
