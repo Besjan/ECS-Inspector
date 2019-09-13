@@ -1,61 +1,60 @@
-﻿namespace Cuku.ECS
+namespace Cuku.ECS
 {
-    using Sirenix.OdinInspector;
-    using System.Collections.Generic;
-    using UnityEngine;
-    using Entitas;
-    using System;
-    using Entitas.Unity;
+	using Sirenix.OdinInspector;
+	using System.Collections.Generic;
+	using UnityEngine;
+	using Entitas;
+	using System;
+	using Entitas.Unity;
 
-    [HideMonoScript]
-    public class Entity : SerializedMonoBehaviour
-    {
-        #region Properties
-        [Space]
-        public List<IComponent> components = new List<IComponent>();
+	[HideMonoScript]
+	public class Entity : SerializedMonoBehaviour
+	{
+		#region Properties
+		[Space]
+		public List<IComponent> components = new List<IComponent>();
 
-        [HideInInspector]
-        public IEntity entity;
-        #endregion
+		[HideInInspector]
+		public IEntity entity;
+		#endregion
 
-        #region Events
-        [HideInInspector]
-        public EntityEvent OnEntityCreated;
+		#region Events
+		[HideInInspector]
+		public EntityEvent OnEntityCreated;
 
-        [HideInInspector]
-        public EntityEvent OnEntityDestroyed;
-        #endregion
+		[HideInInspector]
+		public EntityEvent OnEntityDestroyed;
+		#endregion
 
-        [HideInInspector]
-        [Serializable]
-        public class EntityEvent : UnityEngine.Events.UnityEvent<IEntity> { }
+		[HideInInspector]
+		[Serializable]
+		public class EntityEvent : UnityEngine.Events.UnityEvent<IEntity> { }
 
 
-        void OnEnable()
-        {
-            Type[] componentTypes = new Type[0];
+		void OnEnable()
+		{
+			Type[] componentTypes = new Type[0];
 
-            // Create entity
-            entity = Contexts.sharedInstance.game.CreateEntity();
-            componentTypes = GameComponentsLookup.componentTypes;
+			// Create entity
+			entity = Contexts.sharedInstance.game.CreateEntity();
+			componentTypes = GameComponentsLookup.componentTypes;
 #if UNITY_EDITOR && !ENTITAS_DISABLE_VISUAL_DEBUGGING
-            gameObject.Link(entity);
+			gameObject.Link(entity);
 #endif
 
-            // Add components
-            foreach (var property in components)
-            {
-                var index = Array.IndexOf(componentTypes, property.GetType());
-                if (index >= 0 && !entity.HasComponent(index)) entity.AddComponent(index, property);
-            }
+			// Add components
+			foreach (var property in components)
+			{
+				var index = Array.IndexOf(componentTypes, property.GetType());
+				if (index >= 0 && !entity.HasComponent(index)) entity.AddComponent(index, property);
+			}
 
-            OnEntityCreated.Invoke(entity);
-        }
+			OnEntityCreated.Invoke(entity);
+			entity.OnDestroyEntity += EntityDestroyed;
+		}
 
-        void OnDisable()
-        {
-            OnEntityDestroyed.Invoke(entity);
-
+		void OnDisable()
+		{
 #if UNITY_EDITOR && !ENTITAS_DISABLE_VISUAL_DEBUGGING
             var link = gameObject.GetEntityLink();
 
@@ -63,7 +62,20 @@
             link.Unlink();
             Destroy(link);
 #endif
-            entity.Destroy();
-        }
-    }
+			if (entity.isEnabled)
+			{
+				entity.Destroy();
+			}
+
+			entity.OnDestroyEntity -= EntityDestroyed;
+		}
+
+		private void EntityDestroyed(IEntity destroyedEntity)
+		{
+			if (entity == destroyedEntity)
+			{
+				OnEntityDestroyed.Invoke(entity);
+			}
+		}
+	}
 }
