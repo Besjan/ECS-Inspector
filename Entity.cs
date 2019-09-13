@@ -38,7 +38,7 @@
             // Create entity
             entity = Contexts.sharedInstance.game.CreateEntity();
             componentTypes = GameComponentsLookup.componentTypes;
-#if UNITY_EDITOR
+#if UNITY_EDITOR && !ENTITAS_DISABLE_VISUAL_DEBUGGING
             gameObject.Link(entity);
 #endif
 
@@ -56,7 +56,7 @@
         {
             OnEntityDestroyed.Invoke(entity);
 
-#if UNITY_EDITOR
+#if UNITY_EDITOR && !ENTITAS_DISABLE_VISUAL_DEBUGGING
             var link = gameObject.GetEntityLink();
 
             if (!link) return;
